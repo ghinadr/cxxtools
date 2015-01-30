@@ -406,17 +406,17 @@ namespace cxxtools
       switch (l)
       {
         case 'f':
-        case 'F': return Logger::FATAL;
+        case 'F': return Logger::LOG_LEVEL_FATAL;
         case 'e':
-        case 'E': return Logger::ERROR;
+        case 'E': return Logger::LOG_LEVEL_ERROR;
         case 'w':
-        case 'W': return Logger::WARN;
+        case 'W': return Logger::LOG_LEVEL_WARN;
         case 'i':
-        case 'I': return Logger::INFO;
+        case 'I': return Logger::LOG_LEVEL_INFO;
         case 'd':
-        case 'D': return Logger::DEBUG;
+        case 'D': return Logger::LOG_LEVEL_DEBUG;
         case 't':
-        case 'T': return Logger::TRACE;
+        case 'T': return Logger::LOG_LEVEL_TRACE;
         default:
                   {
                     std::string msg = "unknown log level \"" + level + '\"';
@@ -463,7 +463,7 @@ namespace cxxtools
           _maxbackupindex(0),
           _logport(0),
           _broadcast(true),
-          _rootLevel(Logger::FATAL)
+          _rootLevel(Logger::LOG_LEVEL_FATAL)
       { }
 
       const std::string& fname() const          { return _fname; }
@@ -598,7 +598,7 @@ namespace cxxtools
 
     std::string rootLevel;
     if (!si.getMember("rootlogger", rootLevel))
-      impl._rootLevel = Logger::FATAL;
+      impl._rootLevel = Logger::LOG_LEVEL_FATAL;
     else
       impl._rootLevel = str2loglevel(rootLevel);
 
@@ -616,7 +616,7 @@ namespace cxxtools
 
         it->getMember("level") >>= levelstr;
         if (levelstr.empty())
-          level = Logger::FATAL;
+          level = Logger::LOG_LEVEL_FATAL;
         else
           level = str2loglevel(levelstr, category);
 
@@ -635,7 +635,7 @@ namespace cxxtools
         it->getValue(levelstr);
 
         if (levelstr.empty())
-          level = Logger::FATAL;
+          level = Logger::LOG_LEVEL_FATAL;
         else
           level = str2loglevel(levelstr, category);
 
@@ -648,11 +648,11 @@ namespace cxxtools
   {
     si.setTypeName("LogConfiguration");
 
-    si.addMember("rootlogger") <<= (impl._rootLevel == Logger::TRACE ? "TRACE"
-                                  : impl._rootLevel == Logger::DEBUG ? "DEBUG"
-                                  : impl._rootLevel == Logger::INFO  ? "INFO"
-                                  : impl._rootLevel == Logger::WARN  ? "WARN"
-                                  : impl._rootLevel == Logger::ERROR ? "ERROR"
+    si.addMember("rootlogger") <<= (impl._rootLevel == Logger::LOG_LEVEL_TRACE ? "TRACE"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_DEBUG ? "DEBUG"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_INFO  ? "INFO"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_WARN  ? "WARN"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_ERROR ? "ERROR"
                                   : "FATAL");
 
     cxxtools::SerializationInfo& lsi = si.addMember("loggers");
@@ -662,11 +662,11 @@ namespace cxxtools
       cxxtools::SerializationInfo& llsi = lsi.addMember();
       llsi.setTypeName("logger");
       llsi.addMember("category") <<= it->first;
-      llsi.addMember("level") <<= (it->second == Logger::TRACE ? "TRACE"
-                                 : it->second == Logger::DEBUG ? "DEBUG"
-                                 : it->second == Logger::INFO ? "INFO"
-                                 : it->second == Logger::WARN ? "WARN"
-                                 : it->second == Logger::ERROR ? "ERROR"
+      llsi.addMember("level") <<= (it->second == Logger::LOG_LEVEL_TRACE ? "TRACE"
+                                 : it->second == Logger::LOG_LEVEL_DEBUG ? "DEBUG"
+                                 : it->second == Logger::LOG_LEVEL_INFO ? "INFO"
+                                 : it->second == Logger::LOG_LEVEL_WARN ? "WARN"
+                                 : it->second == Logger::LOG_LEVEL_ERROR ? "ERROR"
                                  : "FATAL");
     }
 
@@ -1066,11 +1066,11 @@ namespace cxxtools
     : _impl(logMessageImplPool.getInstance())
   {
     _impl->setLogger(logger);
-    _impl->setLevel(level >= Logger::TRACE ? "TRACE"
-                  : level >= Logger::DEBUG ? "DEBUG"
-                  : level >= Logger::INFO  ? "INFO"
-                  : level >= Logger::WARN  ? "WARN"
-                  : level >= Logger::ERROR ? "ERROR"
+    _impl->setLevel(level >= Logger::LOG_LEVEL_TRACE ? "TRACE"
+                  : level >= Logger::LOG_LEVEL_DEBUG ? "DEBUG"
+                  : level >= Logger::LOG_LEVEL_INFO  ? "INFO"
+                  : level >= Logger::LOG_LEVEL_WARN  ? "WARN"
+                  : level >= Logger::LOG_LEVEL_ERROR ? "ERROR"
                   : "FATAL");
   }
 
