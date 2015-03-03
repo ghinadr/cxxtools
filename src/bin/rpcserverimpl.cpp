@@ -132,9 +132,7 @@ RpcServerImpl::~RpcServerImpl()
 void RpcServerImpl::listen(const std::string& ip, unsigned short int port, int backlog)
 {
     log_info("listen on " << ip << " port " << port);
-    net::TcpServer* listener = new net::TcpServer(ip, port, backlog,
-        net::TcpServer::DEFER_ACCEPT|net::TcpServer::REUSEADDR);
-
+    net::TcpServer* listener = new net::TcpServer(ip, port, backlog, net::TcpServer::DEFER_ACCEPT);
     try
     {
         _listener.push_back(listener);
@@ -167,8 +165,6 @@ void RpcServerImpl::start()
 
 void RpcServerImpl::terminate()
 {
-    _eventLoop.processEvents();
-
     MutexLock lock(_threadMutex);
 
     runmode(RpcServer::Terminating);

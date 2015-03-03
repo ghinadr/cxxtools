@@ -63,17 +63,17 @@ namespace net
     class TcpServerImpl* _impl;
 
     public:
-      enum { INHERIT = 1, DEFER_ACCEPT = 2, REUSEADDR = 4 };
+      enum { INHERIT = 1, DEFER_ACCEPT = 2 };
 
       TcpServer();
 
       /** @brief Creates a server socket and listens on an address
       */
-      TcpServer(const std::string& ipaddr, unsigned short int port, int backlog = 5, unsigned flags = REUSEADDR);
+      TcpServer(const std::string& ipaddr, unsigned short int port, int backlog = 5, unsigned flags = 0);
 
       ~TcpServer();
 
-      void listen(const std::string& ipaddr, unsigned short int port, int backlog = 5, unsigned flags = REUSEADDR);
+      void listen(const std::string& ipaddr, unsigned short int port, int backlog = 5, unsigned flags = 0);
 
       // inherit doc
       virtual SelectableImpl& simpl();
