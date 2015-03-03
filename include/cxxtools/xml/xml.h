@@ -95,20 +95,13 @@ namespace xml
     template <typename CharType, typename ObjectType>
     std::basic_ostream<CharType>& operator<< (std::basic_ostream<CharType>& out, const XmlOObject<ObjectType>& object)
     {
-      try
-      {
-        XmlSerializer serializer(out);
+      XmlSerializer serializer(out);
 
-        serializer.useIndent(object.beautify());
-        serializer.useEndl(object.beautify());
-        serializer.useAttributes(object.useAttributes());
+      serializer.useIndent(object.beautify());
+      serializer.useEndl(object.beautify());
+      serializer.useAttributes(object.useAttributes());
 
-        serializer.serialize(object.object(), object.name());
-      }
-      catch (const std::exception&)
-      {
-        out.setstate(std::ios::failbit);
-      }
+      serializer.serialize(object.object(), object.name());
 
       return out;
     }

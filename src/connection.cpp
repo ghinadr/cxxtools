@@ -25,7 +25,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 #include "cxxtools/connectable.h"
 
 namespace cxxtools {
@@ -83,15 +82,14 @@ void Connection::close()
     if( !this->valid() )
         return;
 
-    Connection c(_data);
-    c._data->slot().onDisconnect( *this );
+    _data->slot().onDisconnect( *this );
     // We set the valid flag here to false since the call above may
     // fail for any reason. If setting the valid flag before, a
     // connection may pretend to be closed but it is not and it
     // may reside e.g. in the list of connections of the
     // Connectable class and then provoke an infinite loop.
-    c._data->setValid(false);
-    c._data->sender().onConnectionClose( c );
+    _data->setValid(false);
+    _data->sender().onConnectionClose( *this );
 }
 
 

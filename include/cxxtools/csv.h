@@ -97,24 +97,16 @@ namespace cxxtools
     template <typename CharType, typename ObjectType>
     std::basic_ostream<CharType>& operator<< (std::basic_ostream<CharType>& out, const CsvOObject<ObjectType>& object)
     {
-      try
-      {
-        CsvSerializer serializer(out);
+      CsvSerializer serializer(out);
 
-        if (object.delimiter() != CsvParser::autoDelimiter)
-          serializer.delimiter(object.delimiter());
-        if (object.quote() != Char(0))
-          serializer.quote(object.quote());
-        if (!object.lineEnding().empty())
-          serializer.lineEnding(object.lineEnding());
+      if (object.delimiter() != CsvParser::autoDelimiter)
+        serializer.delimiter(object.delimiter());
+      if (object.quote() != Char(0))
+        serializer.quote(object.quote());
+      if (!object.lineEnding().empty())
+        serializer.lineEnding(object.lineEnding());
 
-        serializer.serialize(object.object());
-      }
-      catch (const std::exception&)
-      {
-        out.setstate(std::ios::failbit);
-      }
-
+      serializer.serialize(object.object());
       return out;
     }
 
@@ -160,22 +152,14 @@ namespace cxxtools
     template <typename CharType, typename ObjectType>
     std::basic_istream<CharType>& operator>> (std::basic_istream<CharType>& in, CsvIOObject<ObjectType> object)
     {
-      try
-      {
-        CsvDeserializer deserializer;
-        if (object.delimiter() != CsvParser::autoDelimiter)
-          deserializer.delimiter(object.delimiter());
-        deserializer.readTitle(object.readTitle());
+      CsvDeserializer deserializer;
+      if (object.delimiter() != CsvParser::autoDelimiter)
+        deserializer.delimiter(object.delimiter());
+      deserializer.readTitle(object.readTitle());
 
-        deserializer.read(in);
+      deserializer.read(in);
 
-        deserializer.deserialize(object.object());
-      }
-      catch (const std::exception&)
-      {
-        in.setstate(std::ios::failbit);
-      }
-
+      deserializer.deserialize(object.object());
       return in;
     }
 

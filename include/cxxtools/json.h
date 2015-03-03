@@ -83,17 +83,10 @@ namespace cxxtools
     template <typename CharType, typename ObjectType>
     std::basic_ostream<CharType>& operator<< (std::basic_ostream<CharType>& out, const JsonOObject<ObjectType>& object)
     {
-      try
-      {
-        JsonSerializer serializer(out);
-        serializer.beautify(object.beautify());
-        serializer.serialize(object.object())
-                  .finish();
-      }
-      catch (const std::exception&)
-      {
-        out.setstate(std::ios::failbit);
-      }
+      JsonSerializer serializer(out);
+      serializer.beautify(object.beautify());
+      serializer.serialize(object.object())
+                .finish();
       return out;
     }
 
@@ -147,15 +140,8 @@ namespace cxxtools
     template <typename CharType, typename ObjectType>
     std::basic_istream<CharType>& operator>> (std::basic_istream<CharType>& in, JsonIOObject<ObjectType> object)
     {
-      try
-      {
-        JsonDeserializer deserializer(in);
-        deserializer.deserialize(object.object());
-      }
-      catch (const std::exception&)
-      {
-        in.setstate(std::ios::failbit);
-      }
+      JsonDeserializer deserializer(in);
+      deserializer.deserialize(object.object());
       return in;
     }
 
