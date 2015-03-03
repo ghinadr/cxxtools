@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 by Marc Boris Duerner
+ * Copyright (C) 2015 Tommi Maekitalo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,45 +25,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include "cxxtools/connectable.h"
-#include "cxxtools/connection.h"
-#include "cxxtools/log.h"
 
-log_define("cxxtools.connectable")
+#include <iostream>
+#include <cxxtools/arg.h>
+#include <cxxtools/net/tcpstream.h>
+#include <cxxtools/net/tcpserver.h>
+#include <cxxtools/bin/bin.h>
+#include "msg.h"
 
-namespace cxxtools {
-
-Connectable::~Connectable()
+int main(int argc, char* argv[])
 {
-    this->clear();
+  try
+  {
+    cxxtools::Arg<std::string> ip(argc, argv, 'i');
+    cxxtools::Arg<unsigned short> port(argc, argv, 'p', 7010);
+
+    // Instantiate a listener socket
+    cxxtools::net::TcpServer srv(ip, port);
+
+    // Instantiate a network iostream and accept a incoming connection.
+    // This will block until a connection arrives.
+    cxxtools::net::TcpStream out(srv);
+
+    // We write 2 messages using binary serialization to the socket.
+    out << cxxtools::bin::Bin(Msg(42, "Hi"))
+        << cxxtools::bin::Bin(Msg(43, "There"))
+        << std::flush;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
 }
 
-
-void Connectable::clear()
-{
-    while( !_connections.empty() )
-    {
-        Connection* c = &_connections.front();
-        c->close();
-        if (&_connections.front() == c)
-        {
-            // this should not really happen but just in case we do not want to loop endlessly
-            log_fatal("connection " << static_cast<void*>(c) << " was not removed from " << static_cast<void*>(this));
-            _connections.pop_front();
-        }
-    }
-}
-
-
-void Connectable::onConnectionOpen(const Connection& c)
-{
-    _connections.push_back(c);
-}
-
-
-void Connectable::onConnectionClose(const Connection& c)
-{
-    _connections.remove(c);
-}
-
-} // namespace cxxtools

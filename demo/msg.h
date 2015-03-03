@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 by Marc Boris Duerner
+ * Copyright (C) 2015 Tommi Maekitalo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,45 +25,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include "cxxtools/connectable.h"
-#include "cxxtools/connection.h"
-#include "cxxtools/log.h"
 
-log_define("cxxtools.connectable")
+#ifndef MSG_H
+#define MSG_H
 
-namespace cxxtools {
+#include <cxxtools/serializationinfo.h>
 
-Connectable::~Connectable()
+struct Msg
 {
-    this->clear();
+  int value;
+  std::string str;
+
+  Msg() { }
+  Msg(int v, const std::string& s)
+    : value(v),
+      str(s)
+      { }
+};
+
+inline void operator<<= (cxxtools::SerializationInfo& si, const Msg& msg)
+{
+  si.setTypeName("Msg");
+  si.addMember("value") <<= msg.value;
+  si.addMember("str") <<= msg.str;
 }
 
-
-void Connectable::clear()
+inline void operator>>= (const cxxtools::SerializationInfo& si, Msg& msg)
 {
-    while( !_connections.empty() )
-    {
-        Connection* c = &_connections.front();
-        c->close();
-        if (&_connections.front() == c)
-        {
-            // this should not really happen but just in case we do not want to loop endlessly
-            log_fatal("connection " << static_cast<void*>(c) << " was not removed from " << static_cast<void*>(this));
-            _connections.pop_front();
-        }
-    }
+  si.getMember("value") >>= msg.value;
+  si.getMember("str") >>= msg.str;
 }
 
+#endif // MSG_H
 
-void Connectable::onConnectionOpen(const Connection& c)
-{
-    _connections.push_back(c);
-}
-
-
-void Connectable::onConnectionClose(const Connection& c)
-{
-    _connections.remove(c);
-}
-
-} // namespace cxxtools

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2006 by Marc Boris Duerner
+ * Copyright (C) 2015 Tommi Maekitalo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,45 +25,60 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#include "cxxtools/connectable.h"
-#include "cxxtools/connection.h"
-#include "cxxtools/log.h"
 
-log_define("cxxtools.connectable")
+#include <iostream>
+#include <cxxtools/arg.h>
+#include <cxxtools/net/tcpstream.h>
+#include <cxxtools/bin/bin.h>
+#include "msg.h"
 
-namespace cxxtools {
-
-Connectable::~Connectable()
+int main(int argc, char* argv[])
 {
-    this->clear();
-}
+  try
+  {
+    cxxtools::Arg<std::string> ip(argc, argv, 'i');
+    cxxtools::Arg<unsigned short> port(argc, argv, 'p', 7010);
 
+    // We instantiate a network iostream and connect to a server
+    cxxtools::net::TcpStream inp(ip, port);
 
-void Connectable::clear()
-{
-    while( !_connections.empty() )
+    // ... and read messages until the stream fails.
+    Msg msg;
+    while (inp >> cxxtools::bin::Bin(msg))
     {
-        Connection* c = &_connections.front();
-        c->close();
-        if (&_connections.front() == c)
-        {
-            // this should not really happen but just in case we do not want to loop endlessly
-            log_fatal("connection " << static_cast<void*>(c) << " was not removed from " << static_cast<void*>(this));
-            _connections.pop_front();
-        }
+      std::cout << msg.value << '\t' << msg.str << std::endl;
     }
+
+/*
+  As an alternative the deserializer can be used directly.
+
+  This gives more control about the input operation.
+  It is especially useful when non blocking I/O is used.
+  The deserializer keeps the current state between the calls to `advance`.
+
+  @code
+
+    char ch;
+    cxxtools::bin::Deserializer deserializer;
+    deserializer.begin();
+
+    while (inp.get(ch))
+    {
+      if (deserializer.advance(ch) == true)
+      {
+        Msg msg;
+        deserializer.deserialize(msg);
+        std::cout << msg.value << '\t' << msg.str << std::endl;
+        deserializer.begin();
+      }
+    }
+
+  @endcode
+*/
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
 }
 
-
-void Connectable::onConnectionOpen(const Connection& c)
-{
-    _connections.push_back(c);
-}
-
-
-void Connectable::onConnectionClose(const Connection& c)
-{
-    _connections.remove(c);
-}
-
-} // namespace cxxtools
