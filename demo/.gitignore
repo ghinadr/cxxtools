@@ -6,6 +6,7 @@ deserialization
 dir
 dlloader
 execLs
+future
 getini
 hd
 httprequest
@@ -17,6 +18,7 @@ logbench
 logsh
 md5sum
 mime
+msgclient
 multifstream
 netcat
 netio
@@ -36,3 +38,5 @@ timer
 thread
 threadpool
 uuencode
+xmlreader
+msgserver
