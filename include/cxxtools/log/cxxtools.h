@@ -33,12 +33,12 @@
 #include <iostream>
 
 #define _cxxtools_log_enabled(impl, level)   \
-  (getLogger ## impl() != 0 && getLogger ## impl()->isEnabled(::cxxtools::Logger::LOG_LEVEL_ ## level))
+  (getLogger ## impl() != 0 && getLogger ## impl()->isEnabled(::cxxtools::Logger::level))
 
 #define _cxxtools_log(impl, level, displaylevel, expr)   \
   do { \
     ::cxxtools::Logger* _cxxtools_logger = getLogger ## impl(); \
-    if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::LOG_LEVEL_ ## level)) \
+    if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::level)) \
     { \
       ::cxxtools::LogMessage _cxxtools_logMessage(_cxxtools_logger, displaylevel); \
       _cxxtools_logMessage.out() << expr; \
@@ -49,7 +49,7 @@
 #define _cxxtools_log_if(impl, level, displaylevel, cond, expr)   \
   do { \
     ::cxxtools::Logger* _cxxtools_logger = getLogger ## impl(); \
-    if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::LOG_LEVEL_ ## level) && (cond)) \
+    if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::level) && (cond)) \
     { \
       ::cxxtools::LogMessage _cxxtools_logMessage(_cxxtools_logger, displaylevel); \
       _cxxtools_logMessage.out() << expr; \
@@ -117,11 +117,7 @@
   ::cxxtools::LogTracer _cxxtools_tracer;  \
   do { \
     ::cxxtools::Logger* _cxxtools_logger = getLogger ## impl(); \
-<<<<<<< HEAD
     if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::LOG_TRACE)) \
-=======
-    if (_cxxtools_logger != 0 && _cxxtools_logger->isEnabled(::cxxtools::Logger::LOG_LEVEL_TRACE)) \
->>>>>>> origin/master
     { \
       _cxxtools_tracer.setLogger(_cxxtools_logger); \
       _cxxtools_tracer.out() << expr;  \
@@ -159,7 +155,6 @@ namespace cxxtools
       Logger& operator=(const Logger&);
 
     public:
-<<<<<<< HEAD
       enum log_flag_type {
         LOG_FATAL  = 0x01,
         LOG_ERROR  = 0x02,
@@ -183,16 +178,6 @@ namespace cxxtools
         LOG_LEVEL_FINEST = (LOG_FINEST << 1) - 1,
         LOG_LEVEL_TRACE  = LOG_LEVEL_DEBUG | LOG_TRACE
       };
-=======
-      typedef enum {
-        LOG_LEVEL_FATAL = 0,
-        LOG_LEVEL_ERROR = 100,
-        LOG_LEVEL_WARN  = 200,
-        LOG_LEVEL_INFO  = 300,
-        LOG_LEVEL_DEBUG = 400,
-        LOG_LEVEL_TRACE = 500
-      } log_level_type;
->>>>>>> origin/master
 
     private:
       std::string category;
