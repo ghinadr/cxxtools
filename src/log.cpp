@@ -473,6 +473,7 @@ namespace cxxtools
 
       switch (level[0])
       {
+<<<<<<< HEAD
         case 'f': case 'F': return Logger::LOG_FATAL;
         case 'e': case 'E': return Logger::LOG_ERROR;
         case 'w': case 'W': return Logger::LOG_WARN;
@@ -480,6 +481,27 @@ namespace cxxtools
         case 'd': case 'D': return Logger::LOG_DEBUG;
         case 't': case 'T': return Logger::LOG_TRACE;
         default:            return static_cast<Logger::log_flag_type>(0);
+=======
+        case 'f':
+        case 'F': return Logger::LOG_LEVEL_FATAL;
+        case 'e':
+        case 'E': return Logger::LOG_LEVEL_ERROR;
+        case 'w':
+        case 'W': return Logger::LOG_LEVEL_WARN;
+        case 'i':
+        case 'I': return Logger::LOG_LEVEL_INFO;
+        case 'd':
+        case 'D': return Logger::LOG_LEVEL_DEBUG;
+        case 't':
+        case 'T': return Logger::LOG_LEVEL_TRACE;
+        default:
+                  {
+                    std::string msg = "unknown log level \"" + level + '\"';
+                    if (!category.empty())
+                      msg += " for category \"" + category + '"';
+                    throw std::runtime_error(msg);
+                  }
+>>>>>>> origin/master
       }
     }
 
@@ -601,7 +623,11 @@ namespace cxxtools
           _maxbackupindex(0),
           _logport(0),
           _broadcast(true),
+<<<<<<< HEAD
           _rootFlags(Logger::LOG_LEVEL_FATAL)
+=======
+          _rootLevel(Logger::LOG_LEVEL_FATAL)
+>>>>>>> origin/master
       { }
 
       const std::string& fname() const          { return _fname; }
@@ -737,9 +763,15 @@ namespace cxxtools
         impl._tostdout = false;
     }
 
+<<<<<<< HEAD
     std::string rootFlags;
     if (!si.getMember("rootlogger", rootFlags))
       impl._rootFlags = Logger::LOG_LEVEL_FATAL;
+=======
+    std::string rootLevel;
+    if (!si.getMember("rootlogger", rootLevel))
+      impl._rootLevel = Logger::LOG_LEVEL_FATAL;
+>>>>>>> origin/master
     else
       impl._rootFlags = str2logflags(rootFlags);
 
@@ -755,9 +787,15 @@ namespace cxxtools
         if (impl._logFlags.find(category) != impl._logFlags.end())
           throw std::runtime_error("level already set for category \"" + category + '"'); 
 
+<<<<<<< HEAD
         it->getMember("level") >>= flagstr;
         if (flagstr.empty())
           flags = Logger::LOG_LEVEL_FATAL;
+=======
+        it->getMember("level") >>= levelstr;
+        if (levelstr.empty())
+          level = Logger::LOG_LEVEL_FATAL;
+>>>>>>> origin/master
         else
           flags = str2logflags(flagstr, category);
 
@@ -775,8 +813,13 @@ namespace cxxtools
 
         it->getValue(flagstr);
 
+<<<<<<< HEAD
         if (flagstr.empty())
           flag = Logger::LOG_LEVEL_FATAL;
+=======
+        if (levelstr.empty())
+          level = Logger::LOG_LEVEL_FATAL;
+>>>>>>> origin/master
         else
           flag = str2logflags(flagstr, category);
 
@@ -789,11 +832,19 @@ namespace cxxtools
   {
     si.setTypeName("LogConfiguration");
 
+<<<<<<< HEAD
     si.addMember("rootlogger") <<= (impl._rootFlags == Logger::LOG_LEVEL_TRACE ? "TRACE"
                                   : impl._rootFlags == Logger::LOG_LEVEL_DEBUG ? "DEBUG"
                                   : impl._rootFlags == Logger::LOG_LEVEL_INFO  ? "INFO"
                                   : impl._rootFlags == Logger::LOG_LEVEL_WARN  ? "WARN"
                                   : impl._rootFlags == Logger::LOG_LEVEL_ERROR ? "ERROR"
+=======
+    si.addMember("rootlogger") <<= (impl._rootLevel == Logger::LOG_LEVEL_TRACE ? "TRACE"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_DEBUG ? "DEBUG"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_INFO  ? "INFO"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_WARN  ? "WARN"
+                                  : impl._rootLevel == Logger::LOG_LEVEL_ERROR ? "ERROR"
+>>>>>>> origin/master
                                   : "FATAL");
 
     cxxtools::SerializationInfo& lsi = si.addMember("loggers");
@@ -1212,8 +1263,11 @@ namespace cxxtools
   {
     _impl->setLogger(logger);
     _impl->setLevel(level >= Logger::LOG_LEVEL_TRACE ? "TRACE"
+<<<<<<< HEAD
                   : level >= Logger::LOG_LEVEL_FINEST ? "FINEST"
                   : level >= Logger::LOG_LEVEL_FINER ? "FINER"
+=======
+>>>>>>> origin/master
                   : level >= Logger::LOG_LEVEL_DEBUG ? "DEBUG"
                   : level >= Logger::LOG_LEVEL_INFO  ? "INFO"
                   : level >= Logger::LOG_LEVEL_WARN  ? "WARN"
